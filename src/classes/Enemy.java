@@ -32,9 +32,9 @@ public class Enemy {
         xpReward = (35*level*level)+(level*rand*rand);
         goldReward = (level*level*level)+(rand*rand*5)+rand;
         
-        health = 500+(level*250);
-        attack = 50+(level*25);
-        defense = 10+(level*15);
+        health = 300+(level*250);
+        attack = 20+(level*25);
+        defense = 5+(level*15);
         
         peasants = level*(4-(rand));
         soldiers = level*rand*2;
@@ -48,9 +48,57 @@ public class Enemy {
         
     }
     
+    public void addDef(int amt){
+        defense+=amt;
+    }
+    
+    public void takeDmg(int amt){
+        health-=amt;
+    }
+    
     public static int randInt(int min, int max) {
         return new Random().nextInt((max - min) + 1) + min;
         
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getXpReward() {
+        return xpReward;
+    }
+
+    public int getGoldReward() {
+        return goldReward;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getPeasants() {
+        return peasants;
+    }
+
+    public int getSoldiers() {
+        return soldiers;
+    }
+
+    public int getTactics() {
+        return tactics;
+    }
+
+    public int getInvestments() {
+        return investments;
     }
     
 }

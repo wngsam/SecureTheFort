@@ -63,6 +63,14 @@ public class Fort implements Serializable {
         currentHealth = maxHealth;
     }
     
+    public void addDef(int amt){
+        defense+=amt;
+    }
+    
+    public void takeDmg(int amt){
+        currentHealth-=amt;
+    }
+    
     public Boolean addExp(int amt){
         exp+=amt;
         return calculateLevel();
@@ -101,6 +109,10 @@ public class Fort implements Serializable {
         defense+=g.getDefBonus();
         maxHealth+=g.getMaxHealthBonus();
         currentHealth = maxHealth;
+    }
+    
+    public void remInvestment(int amt){
+        investments-=amt;
     }
     
     public void addInvestment(int amt){
@@ -147,6 +159,10 @@ public class Fort implements Serializable {
         return currentHealth;
     }
 
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+    
     public int getMaxHealth() {
         return maxHealth;
     }

@@ -71,6 +71,206 @@ public class Driver extends Application {
         primaryStage.show();
     }
     
+    public VBox won(String msg, Enemy e){
+        VBox result = new VBox();
+        
+        Button exit = new Button("Exit");
+        exit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(mainScene);
+            }
+        });
+        
+        int goldDrop = e.getGoldReward()+(5000*(myFort.getLuck()/100));
+        int expReward = e.getXpReward()+(50*(myFort.getTactics()));
+        int peasants = 0;
+        int investments = 0;
+        if(((myFort.getLuck()/100)+randInt(1,100))>50){
+            peasants = randInt(1,e.getPeasants());
+            investments = randInt(0,e.getInvestments());
+        }
+        int investmentGain = investmentResult(myFort.getLuck(),myFort.getTactics(),myFort.getInvestments());
+        
+        result.getChildren().addAll(new Label(msg),
+                new Label(
+                "You won and was awarded: \n"+
+                "Gold: "+goldDrop+"\n"+
+                "EXP: "+expReward+"\n"+
+                "Peasants: "+peasants+"\n"+
+                "Investments: "+investments+"\n\n"+
+                "HP Recovered "+myFort.getHpRegen()+"\n"+
+                "Income Gained "+myFort.getIncome()+"\n"+
+                "Investment Results "+investmentGain+"\n"
+                ),exit);
+        
+        myFort.takeDmg(-myFort.getHpRegen());
+        myFort.addGold(goldDrop+myFort.getIncome()+investmentGain);
+        for(int i=0;i<peasants;i++){
+            myFort.addPeasant(0);
+        }
+        for(int i=0;i<investments;i++){
+            myFort.addInvestment(0);
+        }
+        
+        if(myFort.addExp(expReward)){
+            result.getChildren().add(new Label(
+                    "You have leveled up!\n"
+                    +"You are now level "+myFort.getLevel()+"\n"
+            ));
+        }
+        
+        return result;
+    }
+    
+    public int investmentResult(int luck, int tactic, int investments){
+        if(investments==0){
+            return 0;
+        }
+        
+        int result;
+        
+        int roll = randInt(1,100)+(luck/100);
+        
+        if(roll>95){
+            result = randInt(20,100)*(tactic/100)*investments+randInt(1,10000);
+        }else if(roll>45){
+            result = randInt(5,10)*(tactic/100)*investments;
+        }else if(roll>20){
+            result = 0;
+        }else if(roll>5){
+            return -((randInt(1,investments))+((luck+tactic)/25));
+        }else{
+            return -((randInt((investments/4),investments))+((luck+tactic)/25));
+        }
+        
+        return result;
+    }
+    
+    public VBox lost(){
+        VBox result = new VBox();
+        
+        Button exit = new Button("Exit");
+        exit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(mainScene);
+            }
+        });
+        
+        int goldLoss = ((myFort.getGold()-(myFort.getLuck()*10))/2);
+        if(goldLoss<0){
+            goldLoss=0;
+        }
+        int xpLoss = myFort.getExp()/10;
+        if(xpLoss<0){
+            xpLoss=0;
+        }
+        int investLoss = myFort.getInvestments()/20;
+        if(randInt(myFort.getTactics(),myFort.getTactics()+10)<=myFort.getTactics()){
+            investLoss = investLoss/2;
+        }
+        result.getChildren().addAll(new Label(
+                "You died! Your HP will be recovered.\n"+
+                "You will lose: \n"+
+                "Gold: "+goldLoss+"\n"+
+                "Exp: "+xpLoss+"\n"+
+                "Investment: "+investLoss+"\n"
+        ),exit);
+        
+        myFort.setCurrentHealth(myFort.getMaxHealth());
+        myFort.addGold(-goldLoss);
+        myFort.addExp(-xpLoss);
+        myFort.remInvestment(investLoss);
+        
+        return result;
+    }
+    
+    public VBox fight(String msg, Enemy e){
+        System.out.println("Figting."+e.getHealth());
+        
+        if(e.getHealth()<=0){
+            return won(msg,e);
+        }else if(myFort.getCurrentHealth()<=0){
+            return lost();
+        }
+        
+        VBox result = new VBox();
+        
+        result.getChildren().addAll(new Label(msg));
+        
+        HBox stats = new HBox();
+        
+        stats.getChildren().add(new Label(
+                "YOU:\n"+
+                "HP: "+myFort.getCurrentHealth()+"/"+myFort.getMaxHealth()+"\n"+
+                "Gold: "+myFort.getGold()+"\n"+
+                "Atk: "+myFort.getAttack()+"   Def:"+myFort.getDefense()+"\n"+
+                "Peasants: "+myFort.getPeasants()+"\n"+
+                "Soldiers: "+myFort.getSoldiers()+"\n"+
+                "Tactics: "+myFort.getTactics()+"\n"+
+                "Luck: "+myFort.getLuck()+"\n"
+        ));
+        
+        stats.getChildren().add(new Label(
+                "   ENEMY:\n"+
+                "   HP: "+e.getHealth()+"\n"+
+                "   Atk: "+e.getAttack()+"   Def:"+e.getDefense()+"\n"+
+                "   Peasants: "+e.getPeasants()+"\n"+
+                "   Soldiers: "+e.getSoldiers()+"\n"
+        ));
+        
+        HBox skills = new HBox();
+        
+        Button fullAtk = new Button("Assault!");
+        fullAtk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(new Scene(fight(em.useAssault(myFort, e),e),800,600));
+            }
+        });
+        skills.getChildren().add(fullAtk);
+        
+        Button shield = new Button("Shields!");
+        shield.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(new Scene(fight(em.useShields(myFort, e),e),800,600));
+            }
+        });
+        skills.getChildren().add(shield);
+        
+        Button sneakAtk = new Button("Ambush!");
+        sneakAtk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(new Scene(fight(em.useAmbush(myFort, e),e),800,600));
+            }
+        });
+        skills.getChildren().add(sneakAtk);
+        
+        Button berserk = new Button("BERSERK!");
+        berserk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(new Scene(fight(em.useBerserk(myFort, e),e),800,600));
+            }
+        });
+        skills.getChildren().add(berserk);
+        
+        Button exit = new Button("Exit");
+        exit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(mainScene);
+            }
+        });
+        
+        result.getChildren().addAll(stats,skills,exit);
+        
+        return result;
+    }
+    
     public HBox viewMainMenu(){
         HBox menu = new HBox();
         
@@ -78,7 +278,8 @@ public class Driver extends Application {
         fight.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                primaryStage.close();
+                Enemy e = new Enemy(myFort.getLevel());
+                primaryStage.setScene(new Scene(fight("Start The Fight!\n",e),800,600));
             }
         });
         menu.getChildren().add(fight);

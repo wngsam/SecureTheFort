@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Random;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -104,7 +105,7 @@ public class Driver extends Application {
         gamble.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                primaryStage.setScene(new Scene(gamble(""),800,600));
+                primaryStage.setScene(new Scene(gamble("",0),800,600));
             }
         });
         menu.getChildren().add(gamble);
@@ -191,10 +192,104 @@ public class Driver extends Application {
         return stats;
     }
     
-    public VBox gamble(String msg){
+    public VBox gamble(String msg, int wager){
         VBox gamble = new VBox();
+        int gold = myFort.getGold();
         
-        gamble.getChildren().add(new Label(msg));
+        gamble.getChildren().addAll(new Label(msg),
+                    new Label(
+                            "\nDOUBLE OR NOTHING! Heads or Tails!"
+                            + "\nYour Wager: "+wager+"\n"
+                            +"Your Total Gold: "+gold+"\n"
+                    ));
+        
+        Button bet = new Button("Bet 10g");
+        if(gold<10){
+            bet.setDisable(true);
+        }
+        bet.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                myFort.addGold(-10);
+                primaryStage.setScene(new Scene(gamble("You added 10g!",wager+10),800,600));
+            }
+        });
+        gamble.getChildren().add(bet);
+        
+        Button head = new Button("HEAD!");
+        if(wager==0){
+            head.setDisable(true);
+        }
+        head.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(randInt(1,100)>50){
+                    myFort.addGold(wager*2);
+                    primaryStage.setScene(new Scene(gamble("HEAD! YOU WON "+wager*2+"g!",0),800,600));
+                }else{
+                    primaryStage.setScene(new Scene(gamble("TAIL! YOU LOST HAHA!",0),800,600));
+                }
+            }
+        });
+        gamble.getChildren().add(head);
+        
+        Button tail = new Button("TAIL!");
+        if(wager==0){
+            tail.setDisable(true);
+        }
+        tail.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(randInt(1,100)<=50){
+                    myFort.addGold(wager*2);
+                    primaryStage.setScene(new Scene(gamble("TAIL! YOU WON "+wager*2+"g!",0),800,600));
+                }else{
+                    primaryStage.setScene(new Scene(gamble("HEAD! YOU LOST HAHA!",0),800,600));
+                }
+            }
+        });
+        gamble.getChildren().add(tail);
+        
+        gamble.getChildren().add(new Label(
+                "\nTheNumber Game!\n"
+                +"Try your chance at winning big!\n"
+                +"Just bet 1000g and you could win:\n"
+                +"1,000,000g\n" 
+                +"100,000g\n" 
+                +"10,000g\n" 
+                +"1,000g\n" 
+                +"100g\n" 
+                +"0g\n" 
+        ));
+        
+        Button num = new Button("GIVE IT A TRY!");
+        if(gold<1000){
+            num.setDisable(true);
+        }
+        num.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int winning = 0;
+                int num = randInt(0,100);
+                myFort.addGold(-1000);
+                
+                if(num==73){
+                    winning = 1000000;
+                }else if(num>73){
+                    winning = 1000;
+                }else if(num>42){
+                    winning = 100;
+                }else if(num>37){
+                    winning = 10000;
+                }else if(num>35){
+                    winning = 100000;
+                }
+                
+                myFort.addGold(winning);
+                primaryStage.setScene(new Scene(gamble("YOU GOT: "+winning+"! HAHA!",wager),800,600));
+            }
+        });
+        gamble.getChildren().add(num);
         
         Button exit = new Button("Exit");
         exit.setOnAction(new EventHandler<ActionEvent>() {
@@ -206,6 +301,11 @@ public class Driver extends Application {
         gamble.getChildren().add(exit);
         
         return gamble;
+    }
+    
+    public static int randInt(int min, int max) {
+        return new Random().nextInt((max - min) + 1) + min;
+        
     }
     
     /**

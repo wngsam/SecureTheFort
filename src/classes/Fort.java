@@ -42,7 +42,7 @@ public class Fort implements Serializable {
         level = 1;
         exp = 0;
         maxHealth = 1000;
-        gold = 100;
+        gold = 1000000;
         income = 10;
         attack = 20;
         defense = 10;
@@ -60,6 +60,10 @@ public class Fort implements Serializable {
         defense+=20;
         maxHealth+=50;
         currentHealth = maxHealth;
+    }
+    
+    public void addGold(int amt){
+        gold+=amt;
     }
     
     public void purchaseTower(Tower t){

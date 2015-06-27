@@ -63,12 +63,20 @@ public class Fort implements Serializable {
         currentHealth = maxHealth;
     }
     
-    public void calculateLevel(){
+    public Boolean addExp(int amt){
+        exp+=amt;
+        return calculateLevel();
+    }
+    
+    public Boolean calculateLevel(){
+        Boolean leveled = false;
         int calcLevel = (int) ((sqrt(exp)/10)+1);
         int levelDiff = calcLevel-level;
         if(levelDiff>0){
             levelUp(levelDiff);
+            leveled = true;
         }
+        return leveled;
     }
     
     public void levelUp(int amt){

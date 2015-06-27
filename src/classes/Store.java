@@ -26,7 +26,9 @@ public class Store {
     private static Tower[] towers;
     private static Gate[] gates;
     
-    private Store(){}
+    private Store(){
+        createTowersAndGates();
+    }
     
     public static Store getInstance(){
         return instance;
@@ -90,6 +92,52 @@ public class Store {
         });
         store.getChildren().add(buyInvestment);
         
+        Tower saleTower = towers[myFort.getTower().getLevel()-1];
+        
+        store.getChildren().add(new Label(
+                "\n"+saleTower.getName()+"\n"
+                +"Cost: "+saleTower.getCost()+"g \n"
+                +"Level: "+saleTower.getLevel()+"\n"
+                +"+Atk: "+saleTower.getAtkBonus()+"\n"
+                +"+HPRegen: "+saleTower.getHpRegenBonus()+"\n\n"
+        ));
+        
+        Button buyTower = new Button("Buy");
+        if(saleTower.getLevel()>myFort.getLevel()||saleTower.getCost()>gold){
+            buyTower.setDisable(true);
+        }
+        buyTower.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                myFort.purchaseTower(saleTower);
+                primaryStage.setScene(new Scene(displayStore(primaryStage,myFort,mainScene),800,600));
+            }
+        });
+        store.getChildren().add(buyTower);
+        
+        Gate saleGate = gates[myFort.getGate().getLevel()-1];
+        
+        store.getChildren().add(new Label(
+                "\n"+saleGate.getName()+"\n"
+                +"Level: "+saleGate.getLevel()+"\n"
+                +"Cost: "+saleGate.getCost()+"\n"
+                +"+Def: "+saleGate.getDefBonus()+"\n"
+                +"+HP: "+saleGate.getMaxHealthBonus()+"\n\n"
+        ));
+        
+        Button buyGate = new Button("Buy");
+        if(saleGate.getLevel()>myFort.getLevel()||saleGate.getCost()>gold){
+            buyGate.setDisable(true);
+        }
+        buyGate.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                myFort.purchaseGate(saleGate);
+                primaryStage.setScene(new Scene(displayStore(primaryStage,myFort,mainScene),800,600));
+            }
+        });
+        store.getChildren().add(buyGate);
+        
         Button exit = new Button("Exit");
         exit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -102,21 +150,22 @@ public class Store {
         return store;
     }
     
-    public void createTowersAndGates(){
+    private void createTowersAndGates(){
         towers = new Tower[5];
         gates = new Gate[5];
         
-        towers[0] = new Tower("Wooden Tower",1,0,50,1);
-        towers[1] = new Tower("Wooden Tower",1,0,50,1);
-        towers[2] = new Tower("Wooden Tower",1,0,50,1);
-        towers[3] = new Tower("Wooden Tower",1,0,50,1);
-        towers[4] = new Tower("Wooden Tower",1,0,50,1);
-        
-        gates[0] = new Gate("Wooden Gate",1,0,20,50);
-        gates[1] = new Gate("Wooden Gate",1,0,20,50);
-        gates[2] = new Gate("Wooden Gate",1,0,20,50);
-        gates[3] = new Gate("Wooden Gate",1,0,20,50);
-        gates[4] = new Gate("Wooden Gate",1,0,20,50);
+        //Name, Level, Cost, ATK, HPRegen
+        towers[0] = new Tower("Barricaded Tower",2,750,35,2);
+        towers[1] = new Tower("Stone Tower",4,1000,35,2);
+        towers[2] = new Tower("Reinforced Tower",6,1500,35,2);
+        towers[3] = new Tower("Archer Tower",9,2500,38,1);
+        towers[4] = new Tower("Crossbow Tower",11,4000,40,1);
+        //Name, Level, Cost, DEF, HP
+        gates[0] = new Gate("Barricaded Gate",2,1000,20,50);
+        gates[1] = new Gate("Stone Gate",4,1250,20,50);
+        gates[2] = new Gate("Reinforced Gate",6,1750,30,50);
+        gates[3] = new Gate("Iron Gate",9,2750,35,50);
+        gates[4] = new Gate("Steel Gate",11,4750,35,55);
     }
     
 }

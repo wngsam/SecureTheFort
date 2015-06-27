@@ -13,11 +13,11 @@ import java.io.Serializable;
  */
 public class Gate implements Serializable {
     
-    private String name;
-    private int level;
-    private int cost;
-    private int defBonus;
-    private int maxHealthBonus;
+    private final String name;
+    private final int level;
+    private final int cost;
+    private final int defBonus;
+    private final int maxHealthBonus;
 
     public Gate(String name, int level, int cost, int defBonus, int maxHealthBonus) {
         this.name = name;
@@ -25,6 +25,26 @@ public class Gate implements Serializable {
         this.cost = cost;
         this.defBonus = defBonus;
         this.maxHealthBonus = maxHealthBonus;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getDefBonus() {
+        return defBonus;
+    }
+
+    public int getMaxHealthBonus() {
+        return maxHealthBonus;
     }
     
 }

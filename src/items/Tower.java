@@ -13,11 +13,11 @@ import java.io.Serializable;
  */
 public class Tower implements Serializable {
     
-    private String name;
-    private int level;
-    private int cost;
-    private int atkBonus;
-    private int hpRegenBonus;
+    private final String name;
+    private final int level;
+    private final int cost;
+    private final int atkBonus;
+    private final int hpRegenBonus;
 
     public Tower(String name, int level, int cost, int atkBonus, int hpRegenBonus) {
         this.name = name;
@@ -25,6 +25,26 @@ public class Tower implements Serializable {
         this.cost = cost;
         this.atkBonus = atkBonus;
         this.hpRegenBonus = hpRegenBonus;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getAtkBonus() {
+        return atkBonus;
+    }
+
+    public int getHpRegenBonus() {
+        return hpRegenBonus;
     }
     
 }

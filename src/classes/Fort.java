@@ -62,6 +62,21 @@ public class Fort implements Serializable {
         currentHealth = maxHealth;
     }
     
+    public void purchaseTower(Tower t){
+        gold-=t.getCost();
+        tower = t;
+        attack+=t.getAtkBonus();
+        hpRegen+=t.getHpRegenBonus();
+    }
+    
+    public void purchaseGate(Gate g){
+        gold-=g.getCost();
+        gate = g;
+        defense+=g.getDefBonus();
+        maxHealth+=g.getMaxHealthBonus();
+        currentHealth = maxHealth;
+    }
+    
     public void addInvestment(int amt){
         gold-=amt;
         investments++;
@@ -150,6 +165,14 @@ public class Fort implements Serializable {
         return statPoints;
     }
 
+    public Tower getTower() {
+        return tower;
+    }
+
+    public Gate getGate() {
+        return gate;
+    }
+    
     public int getInvestments() {
         return investments;
     }

@@ -41,7 +41,8 @@ public class Driver extends Application {
             ois.close();
             System.out.println("Load successful.");
         }catch(IOException | ClassNotFoundException e){
-            e.printStackTrace();
+            System.out.println("Load unsuccessful, possibly save not found.");
+            //e.printStackTrace();
             myFort = new Fort();
         }
     }
@@ -103,6 +104,7 @@ public class Driver extends Application {
         gamble.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                primaryStage.setScene(new Scene(gamble(""),800,600));
             }
         });
         menu.getChildren().add(gamble);
@@ -187,6 +189,23 @@ public class Driver extends Application {
         stats.getChildren().add(exit);
         
         return stats;
+    }
+    
+    public VBox gamble(String msg){
+        VBox gamble = new VBox();
+        
+        gamble.getChildren().add(new Label(msg));
+        
+        Button exit = new Button("Exit");
+        exit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(mainScene);
+            }
+        });
+        gamble.getChildren().add(exit);
+        
+        return gamble;
     }
     
     /**

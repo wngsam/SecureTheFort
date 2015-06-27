@@ -8,6 +8,7 @@ package classes;
 import items.Gate;
 import items.Tower;
 import java.io.Serializable;
+import static java.lang.Math.sqrt;
 
 /**
  *
@@ -42,7 +43,7 @@ public class Fort implements Serializable {
         level = 1;
         exp = 0;
         maxHealth = 1000;
-        gold = 1000000;
+        gold = 1000;
         income = 10;
         attack = 20;
         defense = 10;
@@ -60,6 +61,19 @@ public class Fort implements Serializable {
         defense+=20;
         maxHealth+=50;
         currentHealth = maxHealth;
+    }
+    
+    public void calculateLevel(){
+        int calcLevel = (int) ((sqrt(exp)/10)+1);
+        int levelDiff = calcLevel-level;
+        if(levelDiff>0){
+            levelUp(levelDiff);
+        }
+    }
+    
+    public void levelUp(int amt){
+        level+=amt;
+        statPoints+=(amt*10);
     }
     
     public void addGold(int amt){
